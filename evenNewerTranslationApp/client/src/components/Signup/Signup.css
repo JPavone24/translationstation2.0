@@ -1,0 +1,14 @@
+#signup-whole-form{
+  margin-top: 20px;
+  background-color: rgba(240, 195, 166, 0.7);
+  border: 5px solid  rgb(82, 56, 27);
+  margin: 80px;
+  padding: 20px;
+}
+
+#signup-form{
+  background-color: cadetblue;
+}
+#signup-img{
+  background-color: cadetblue;
+}

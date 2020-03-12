@@ -1,0 +1,11 @@
+#nav-bar{
+    background-color: rgb(73, 52, 34, 0.7);
+  }
+#title{
+  font-size: 30px;
+  font-family: 'Times New Roman', Times, serif;
+  color: blanchedalmond;
+}
+#link1, #link2, #link3, #link4{
+    color: rgb(248, 212, 182)
+}

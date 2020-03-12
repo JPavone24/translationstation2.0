@@ -1,0 +1,36 @@
+
+#signin-heading{
+  color: blanchedalmond;
+  -webkit-text-stroke: 2px rgb(31, 18, 12);
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 50px;
+}
+
+#whole-form{
+  margin-top: 20px;
+  background-color: rgba(240, 195, 166, 0.7);
+  border: 5px solid  rgb(82, 56, 27);
+  margin: 80px;
+  padding: 20px;
+}
+
+#login-form{
+  padding: 20px;
+  background-color: rgb(151, 105, 52, 0.7);
+ 
+}
+#signin-img{
+  margin-top: 10px;
+  
+}
+#signin-btn{
+ background-color:burlywood ;
+}
+#signup-btn{
+  background-color:burlywood ;
+}
+#group1{
+ margin-top: 40px;
+ margin-bottom: 40px;
+}
+
