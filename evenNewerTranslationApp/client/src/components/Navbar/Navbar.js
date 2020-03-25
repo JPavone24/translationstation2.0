@@ -4,26 +4,26 @@ import "../Navbar/Navbar.css";
  
 function Navbar() {
   return(
-          <nav id = "nav-bar" class="navbar navbar-expand-lg static-top">
-          <div class="container">
-              <a class="navbar-brand js-scroll-trigger" href="/" id = "title">Translation Station</a>
-              <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <nav id = "nav-bar" className="navbar navbar-expand-lg static-top">
+          <div className="container">
+              <a className="navbar-brand js-scroll-trigger" href="/" id = "title">Translation Station</a>
+              <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
               Menu
-              <i class="fas fa-bars"></i>
+              <i className="fas fa-bars"></i>
               </button>
-              <div class="collapse navbar-collapse" id="sidebar">
-              <ul class="navbar-nav text-uppercase ml-auto">
-                  <li class="nav-item">
-                  <a id = "link1" class="nav-link js-scroll-trigger" href="/">Home</a>
+              <div className="collapse navbar-collapse" id="sidebar">
+              <ul className="navbar-nav text-uppercase ml-auto">
+                  <li className="nav-item">
+                  <a id = "link1" className="nav-link js-scroll-trigger" href="/">Home</a>
                   </li>
-                  <li class="nav-item">
-                  <a id = "link2" class="nav-link js-scroll-trigger" href="/signin">Signin</a>
+                  <li className="nav-item">
+                  <a id = "link2" className="nav-link js-scroll-trigger" href="/signin">Signin</a>
                   </li>  
-                  <li class="nav-item">
-                      <a id = "link3" class="nav-link js-scroll-trigger" href="/signup">Signup</a>
+                  <li className="nav-item">
+                      <a id = "link3" className="nav-link js-scroll-trigger" href="/signup">Signup</a>
                   </li>
-                  <li class="nav-item">
-                      <a id = "link4"class="nav-link js-scroll-trigger" href="/chat">Chat</a>
+                  <li className="nav-item">
+                      <a id = "link4"className="nav-link js-scroll-trigger" href="/chat">Chat</a>
                   </li>
               </ul>
               </div>

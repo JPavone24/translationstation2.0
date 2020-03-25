@@ -9,7 +9,7 @@ class Home extends Component {
       <div>
          <Navbar />
               <div className="col-lg-12" id="main-text">
-                  <div class = " text-center" id = "header-background">
+                  <div className = " text-center" id = "header-background">
                   <h1 id  = "heading">Translation Station</h1>
                   <div id = "sub-heading">
                   <h2> Connecting The World</h2>

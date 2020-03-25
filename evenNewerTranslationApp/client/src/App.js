@@ -1,8 +1,9 @@
 import React from "react";
 import Home from "./components/Home/Home";
-import Signin from "./components/Signin/Join";
+import Signup from "./components/Signup/Signup";
+import Signin from "./components/Signin/Signin";
+import Newroom from "./components/Signin/newroom";
 import Chat from "./components/Chat/Chat2";
-
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 function App() {
@@ -11,7 +12,9 @@ function App() {
       <div>
         <Switch>
           <Route exact path="/" component={Home} />
+          <Route exact path="/Signup" component={Signup} />
           <Route exact path="/Signin" component={Signin} />
+          <Route exact path="/newroom" component={Newroom} />
           <Route exact path="/chat" component={Chat} />
         </Switch>
       </div>

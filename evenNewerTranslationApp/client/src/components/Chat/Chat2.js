@@ -2,51 +2,63 @@ import React, { useState, useEffect } from "react";
 import queryString from 'query-string';
 import io from "socket.io-client";
 
+
+
 let socket;
 
 const Chat =({location}) => {
     
     const [name, setName] = useState('');
+    const [name2, setName2] = useState('');
     const [room, setRoom] = useState('');
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const ENDPOINT = 'localhost:5000'
 
     useEffect(() => {
-        const {name, room} = queryString.parse(location.search);      
         socket = io(ENDPOINT)
+        const {name, room, name2} = queryString.parse(location.search);     
+        console.log(name, room, name2) 
         setName(name);
+        setName2(name2);
         setRoom(room);
-    
-        socket.emit('join', {name, room}, () => {
-        })
-      
+  
+        socket.emit('enterChat', {name, room, name2}, () => {
+        })    
         return() => {
             socket.emit('disconnect')
             socket.off()
         }
-    }, [ENDPOINT, location.search]);
+    } ,
+    [ENDPOINT, location.search]
+    );
 
 useEffect(() =>{
     socket.on('message', (message) =>{
+        console.log(message)
         setMessages([...messages, message])
+        console.log(messages)
     })
-    console.log(messages)
+ 
 }, [messages]
-
 )
 
 const sendMessage =(event)=> {
-    console.log(message)
-    event.preventDefault()
-    socket.emit('sendMessage', message )
+   event.preventDefault()
+   console.log(message)
+   socket.emit('sendMessage', {
+     'sender': name,
+     'reciever': name2,
+     'message': message,
+     'room': room,
+   })
 }
 
       return (
         <div>
-            <h1>Welcome {name} to Room: {room}</h1>
+             <h1>Welcome {name} to Room: {room}</h1>
             <div id = "chatroom"></div>
-            {messages.map((message, i) => <div key = {i}> {message.user}: {message.text}</div>)}
+      {messages.map((message, i )=> <li  key = {i}><span><b>{message.user}:</b> {message.textT}</span></li>)}
             <form onSubmit = {(event) => sendMessage(event)}>
             <label>
               Message
@@ -59,7 +71,7 @@ const sendMessage =(event)=> {
             <button type = "submit">
                 Add
             </button>
-          </form>
+          </form> 
         </div>
       )
   }

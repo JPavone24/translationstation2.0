@@ -21,8 +21,6 @@ handleSubmit = event => {
     localStorage.setItem('message', this.state.message)
     socket.emit('message', this.state.message)
 }
-  
-
   render() {
     return (
       <div>
