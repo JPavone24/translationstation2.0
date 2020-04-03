@@ -32,25 +32,24 @@ mongoose.connection.on('connected', () => {
 const server = http.createServer(app)
 const io = socketio(server)
 const onlineUsers = []
-var onlineUsersInChat = []
+// var onlineUsersInChat = []
 var usersandrooms = []
 
 
 function SendMessage(recipient, sender, message, destination){
   for(var i = 0; i < onlineUsers.length; i++){
     if(recipient === onlineUsers[i].username){
-       var msgReciever = onlineUsers[i]
-       console.log('=============msgReciever=================')
-       console.log(msgReciever)  
+      //  console.log('=============msgReciever=================')
+      var msgReciever = onlineUsers[i]
+      console.log(msgReciever)  
       } 
-    }
+  }
         var sendTo = destination
         io.to(`${msgReciever.id}`).emit(sendTo,{
             "message": message,
-            "sender": sender,
+           "sender": sender,
             "reciever" :recipient,
-      })
-
+       })
 }
 
 function SendMessageToRoom(recipient, sender, message, destination, room, socket){
@@ -107,14 +106,21 @@ io.on('connection', (socket) => {;
         // console.log(newuser[0].username)
        onlineUsers.push({"username": newuser[0].username, "language": newuser[0].language, "id": socket.id})
        io.emit('userlist', {"username": newuser[0].username, "language": newuser[0].language, "id": socket.id})
+
+       console.log(onlineUsers)
       })
       
     })
   
+    socket.on('groupmsg', function(data){
+      console.log(data)
+      io.emit('recieveGroupMsg', data)
+    })
+
     socket.on('invite', function(data){
     console.log("you have hit the invitation route")
-    console.log("---------------------------------------")
-     console.log(data)
+    console.log("-------------users--------------")
+    console.log("---------------data---------------------")
      SendMessage(data.sender, data.reciever,'you have invited ' + data.reciever + ' to chat','confirminvitation')
      SendMessage(data.reciever, data.sender, data.sender + ' is inviting you to chat', 'sendinvitation')
   });
@@ -127,35 +133,110 @@ io.on('connection', (socket) => {;
       SendMessage(data.sender, data.reciever, 'your chatroom is ready', 'invitationAccepted')    
     })
 
-    socket.on('enterChat', function(data){
+    socket.on('joinroom', function(data){
+      console.log("you have hit the joinroom route")
+      console.log("---------------------------------------")
+      console.log(data)
+      // SendMessage(data.reciever, data.sender, 'user invites you to join ' + data.room, 'acceptRoom')  
+      
+            
+            for(var i = 0; i < onlineUsers.length; i++){
+              if(data.reciever === onlineUsers[i].username){
+                //  console.log('=============msgReciever=================')
+                var msgReciever = onlineUsers[i]
+                console.log(msgReciever)  
+                } 
+            }
+            io.to(`${msgReciever.id}`).emit('acceptRoom',{
+                "message": 'user invites you to join ' + data.room,
+                "sender": data.sender,
+                "reciever" :data.reciever,
+                'room': data.room
+           })
+    })
+  
+    
+    socket.on('EnterChatRoom', function(data) {
+      console.log('------EnterChatRoom------')
+      console.log(data)
       console.log(data.name)
-
-      socket.join(data.room)
+      User.find({username: data.name})
+      .then((newuser) =>{
+        // console.log(newuser[0].username)
       console.log(socket.id)
-     
-        User.find({username: data.name})
-        .then((newuser) =>{
-          console.log(newuser[0])
-         onlineUsersInChat.push({"username": newuser[0].username, "language": newuser[0].language, "id": socket.id})
-         console.log(onlineUsersInChat)
-         SendMessageToRoom(data.name, "Admin", " welcome "+ data.name +", to room: " + data.room ,'message', data.room, socket)
-         BroadCastMessageToRoom(data.name2, "Admin", data.name + " has joined!" ,'message', data.room, socket)
-        //  io.emit('userlist', {"username": newuser[0].username, "language": newuser[0].language, "id": socket.id})
-        })
-        
-    
-      // socket.broadcast.to(data.room).emit('message', {user: "admin", textT :data.name + ' has joined!' })
-    })
+      socket.join(data.room)
+      io.in(`${data.room}`).emit('userlist2', onlineUsers)
+       })
+        function isThisUser(person){
+         return person.username === data.name
+        }
+       var user = onlineUsers.reverse().find(isThisUser)
+       user.id = socket.id
+       console.log('-----online users----')
+       console.log(onlineUsers)
+})      
+      
+socket.on('pvtmsg', function(data){
+  console.log('you have hit the pvtmsg route')
+  console.log('-------------------------')  
+  console.log(data)   
+     io.in(`${data.room}`).emit('bob', {
+    'user': data.username, 'text': data.message
+   })
+})
 
+socket.on('agreeToRoom', function(data){
+  console.log(data)
+})
+
+
+// socket.on('addNewPersonToRoom', function(data){
+//   console.log('you have hit the addpersontoroom route')
+//   console.log('---------users--------')  
+//   console.log(onlineUsers)
+//   console.log('---------data---------')  
+//   console.log(data)
+//   console.log('---------find chosen user---------')  
+//    for (var i = 0; i < onlineUsers.length; i++ ){
+//      if(data.reciever ===onlineUsers[i].username){
+//        console.log(onlineUsers[i])
+//        var chosenuser = onlineUsers[i]
+//      }
+//    }
+//    io.to(`${chosenuser.id}`).emit('invitationFromRoom',{
+//      'sender':data.sender,
+//      'reciever': data.reciever,
+//      'message': data.sender + 'has invited you to join in chat room' + data.room,
+//      'room': data.room
+//    })
+
+// })
+ 
+// socket.on('joinroom', function(data){
+//   console.log('you have hit the joinroom route')
+//   console.log('---------users--------') 
+//   console.log(data)
+//   for (var i = 0; i < onlineUsers.length; i++ ){
+//     if(data.reciever ===onlineUsers[i].username){
+//       console.log(onlineUsers[i])
+//       var chosenuser = onlineUsers[i]
+//     }
+//   }
+//   socket.emit('invitationFromRoom',{
+//     'sender':data.sender,
+//     'reciever': data.reciever,
+//     'message': 'enter chat',
+//   })
+//   io.to(`${chosenuser.id}`).emit('goToNewRoom',{
+//     'sender':data.sender,
+//     'reciever': data.reciever,
+//     'message': 'user has accepted your chat',
+//     'room': data.room
+//   })
+//  })
+})
     
-    socket.on('sendMessage', (data) =>{
-        console.log(data)
-        console.log(socket.id)
-     SendMessageToRoom(data.reciever, data.sender, data.message,'message', data.room)
-     SendMessageToRoom(data.sender, data.sender, data.message,'message', data.room)
-    })
-  })
-    
+
     // socket.on('disconnect',(socket) =>{
     //     console.log('user has left!')
     //     socket.off()

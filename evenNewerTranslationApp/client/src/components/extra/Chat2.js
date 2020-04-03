@@ -58,7 +58,7 @@ const sendMessage =(event)=> {
         <div>
              <h1>Welcome {name} to Room: {room}</h1>
             <div id = "chatroom"></div>
-      {messages.map((message, i )=> <li  key = {i}><span><b>{message.user}:</b> {message.textT}</span></li>)}
+            {messages.map((message, i )=> <li  key = {i}><span><b>{message.user}:</b> {message.textT}</span></li>)}
             <form onSubmit = {(event) => sendMessage(event)}>
             <label>
               Message

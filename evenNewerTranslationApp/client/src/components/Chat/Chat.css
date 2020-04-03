@@ -1,0 +1,45 @@
+
+
+
+#name-greeting{
+    padding: 10px;
+    background-color: rgb(114, 35, 35);
+    color: #ffebcd;
+    margin:0;
+}
+
+#chat-form{
+    border: 5px solid rgb(114, 35, 35);
+    background-color: rgba(255, 235, 205, 0.3);
+}
+
+#names{
+    background-color: rgb(165, 42, 42);
+    padding: 10px;
+}
+
+#online-users-list{
+    background-color:rgba(245, 222, 179, 0.438);
+    padding:10px;
+    border-radius: 10px;
+}
+
+#message-box{
+    background-color: rgb(222, 184, 135, 0.7);
+    padding: 30px;
+ }
+#messages{
+   background-color: blanchedalmond;
+   height: 300px;
+   border-radius: 10px;
+   padding: 30px;
+}
+
+#input{
+    /* padding-top: 10px; */
+}
+
+#button1{
+    background-color:darkred;
+    border: darkred;
+}
