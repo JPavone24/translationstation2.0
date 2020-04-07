@@ -17,7 +17,7 @@ app.use(express.json());
 var apirouter = require('./routes/testAPI');
 
 
-require('dotenv').config();     
+// require('dotenv').config();     
 const uri = process.env.MONGODB_URI;
 mongoose.connect( uri ||"mongodb://localhost/baby-yoda", {
    useNewUrlParser: true, 
