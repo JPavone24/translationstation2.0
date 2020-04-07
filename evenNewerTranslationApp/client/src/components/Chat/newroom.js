@@ -20,71 +20,47 @@ var messagearray5 = []
 var messagearray6 = []
 const parsed = queryString.parse(window.location.search);
 var name = parsed.name
-console.log("name : "+ name)
+var lang = parsed.lang
+// console.log("name : "+ name)
 var msgReciever;
 var acceptBtn = 'accept'
 var enterChat = 'enter chat'
 var thisRoom;
-var greeting = 'welcome'
+var userlanguage = ''
+var mygreeting;
 
-
-
-
-function TranslateEnterBtn(text){
-  for(var i = 0; i < users.length; i++){
-    if(users[i].username ===name){
-      console.log(users[i].language)
-      var lang = users[i].language
-    }
-  }
-  translate.translate(text, { to: lang }, function(err, res) {
-    enterChat = res.text
-  });
-}
 
 
 function TranslateBtn(text, Btn){
-  for(var i = 0; i < users.length; i++){
-    if(users[i].username ===name){
-      console.log(users[i].language)
-      var lang = users[i].language
-    }
-  }
   translate.translate(text, { to: lang }, function(err, res) {
-     acceptBtn = res.text
+    console.log(res.text)
+    Btn = res.text
   });
 }
 
 function TranslateMessage(text, sender, array){
-  for(var i = 0; i < users.length; i++){
-    if(users[i].username ===name){
-      console.log(users[i].language)
-      var lang = users[i].language
-    }
-  }
-  translate.translate(text, { to: lang }, function(err, res) {
+  translate.translate(text, { to: lang}, function(err, res) {
     console.log(res.text)
      array.push({"user": sender, "text": res.text})
   });
-
 }
+
+var headingArray = [];
+var greetingArray = [];
+var instrucationsArray = [];
+var labelArray = [];
+
 
 
 export default class bob extends React.Component {
- 
  
 
 constructor(props){
   super(props)
   this.state = {
-    counter: 10,
     persons: [],
-    clickedPerson:'',
-    language: '',
-    reciever:'',
-    sender: name,
-    message: '',
-    greeting: ''
+    heading: '',
+    greeting: '',
   };
             this.handleChange = event => {
               console.log(event.target.name)
@@ -98,7 +74,6 @@ constructor(props){
               })
             }
   
-
             this.handleClick = (event) => {
             console.log('===================HANDLECliCK EVENT=======================')
               var clickedUser = event.target.dataset.value
@@ -111,7 +86,6 @@ constructor(props){
             this.AcceptMessage = (event) => {
               console.log('=====================ACCEPT MESSAGE=====================')
                 var accept = event.target.dataset.value
-                console.log(this.state.reciever)
                 console.log(msgReciever)
                 socket.emit('join', {"response": accept, "sender":name, "reciever": msgReciever}, () => {
                 })
@@ -136,7 +110,7 @@ constructor(props){
                   console.log(nameArray)
                   var room = nameArray[0] + nameArray[1]
                   console.log(room)
-            window.location.href = "/chat?name=" + name + '&&name2=' + msgReciever + '&&room=' + room
+            window.location.href = "/chat?name=" + name + '&&lang=' + lang + '&&room=' + room
             }
     
             this.goToJoinOthers = (event) => {
@@ -155,57 +129,64 @@ constructor(props){
 
 componentDidMount(){
 
+    this.setState({heading: 'heading'})
+    this.setState({greeting: 'greeting'})
+
   axios.get('http://localhost:5000/testapi/user')
   .then(res => {
-    // console.log(res.data)
     this.setState({persons: res.data})
   })
-
+  axios.get('http://localhost:5000/testapi/user/' + name)
+  .then(res => {
+    userlanguage = res.data.language
+    console.log(userlanguage)
+  })
+ 
   socket = io(ENDPOINT)
+ 
   socket.emit('adduser', {"name": name}, () => {
   })
-  
-  socket.on('userlist', function(data){
-    console.log('USERliST')
-    console.log('--------------------')
+ 
+  socket.on('translateText', function(data){
     console.log(data)
-    users.push(data)
+    function TranslateText(text, array){
+      translate.translate(text, { to: lang }, function(err, res) {
+      array.push(res.text)
+      });
+  }
+    TranslateText('Group Chat', headingArray)
+    TranslateText("welcome " + name, greetingArray)
+    TranslateText('Click on username for private chat', instrucationsArray)
+    TranslateText("chat with all users", labelArray)
+
   })
-  
   socket.on('sendinvitation', function(data){
     console.log('============SEND INVITATION============')
     console.log(data.message[0])
     TranslateBtn('accept', acceptBtn)
     TranslateMessage(data.message, 'admin', messagearray)
-    // messagearray.push(data)
     msgReciever = data.sender
   })
+
+
 
   socket.on('recieveGroupMsg', function(data){
      console.log(data)
      TranslateMessage(data.message, data.username, messagearray3)
   })
 
-  socket.on('bob', function(data){
-    console.log('you have hit the pvtmsg route')
-    console.log('-------------------------')  
-    console.log(data)
-    // TranslateMessage(data.message, data.username, messagearray3)
-  })
 
   socket.on('confirminvitation', function(data){
     console.log('============CONFIRM INVITATION============')
     console.log(data)
-    TranslateEnterBtn('enter chat')
+    TranslateBtn('enter chat' )
     TranslateMessage(data.message, 'admin', messagearray3)
   })
 
    
   socket.on('invitationAccepted', function(data){
     console.log('===========INVITATION ACCEPTED==============')
-    // console.log(data)
-    // console.log(users)
-    TranslateEnterBtn('enter chat')
+    TranslateBtn('enter chat', enterChat)
     TranslateMessage(data.message, 'admin', messagearray2)
     msgReciever = data.sender;
   })
@@ -216,8 +197,6 @@ componentDidMount(){
     thisRoom = data.room
     TranslateBtn('accept', acceptBtn)
     TranslateMessage(data.message, 'admin', messagearray4)
-
-    // msgReciever = data.sender
   })
   // socket.on('invitationFromRoom', function(data){
   //   console.log(data)
@@ -240,7 +219,6 @@ componentDidMount(){
   //   TranslateMessage(data.message, 'admin', messagearray6)
   // })
 
-
 }
 
 componentDidUpdate(nextState){
@@ -249,25 +227,27 @@ componentDidUpdate(nextState){
     this.setState({persons: res.data})
   })
 }
-    render() {
-  
+
+render() {
+
   return<div>
      <Navbar />
       <div className = 'container'>
-      <h1 id = 'heading' className = 'text-center'>{greeting} Group Chat</h1>
+        <h1>{mygreeting}</h1>
+      <h1 id = 'heading' className = 'text-center'>{headingArray[0]}</h1>
           <div className = "row"  id = "chat-form">
                 <div className = "col-lg-4" id = "names">
                     <div id = "names">
-                    <h3 id = "name-greeting" className = 'text-center'>Welcome {name}</h3>
-                    <h5 className = 'text-center'> Click on username for Private Chat</h5>
+                    <h3 id = "name-greeting" className = 'text-center'>{greetingArray[0]}</h3>
+
+                        <h5 className = 'text-center'>{instrucationsArray[0]}</h5>
                         {this.state.persons.map((user, i )=> <li  key = {i}><span  data-value = {user.username}onClick = {(event) => this.handleClick(event)}>{user.username}</span> <b>({user.language})</b></li>)} 
                     </div>
                 </div>
 
                <div className = "col-lg-8" id = 'message-box'>
-                  <h1 className = 'text-center'> Chat with all users</h1>
+                  <h1 className = 'text-center'>{labelArray[0]}</h1>
                     <div id = "messages">
-                       
                         {messagearray3.map((message, i )=> <div key = {i}><span><b>{message.user}: </b>{message.text}</span></div>)}
                         {messagearray.map((message, i )=> <div key = {i}><span><b> {message.user} </b>{message.text}</span> <button data-value = "accept" onClick = {(event) => this.AcceptMessage(event)}>{acceptBtn}</button></div>)}
                         {messagearray2.map((message, i )=> <div key = {i}><span><b>{message.user} </b>{message.text}</span><button data-value = "getaRoom" onClick = {(event) => this.goToChat(event)}>{enterChat}</button></div>)}

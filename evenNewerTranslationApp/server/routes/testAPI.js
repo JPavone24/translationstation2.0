@@ -59,5 +59,17 @@ router.post("/user", function(req, res) {
     })
   }); 
 
+  router.get("/user/:name", function(req, res) {
+    console.log(req.params.name)
+    User.find({username: req.params.name})
+    .then((data) =>{
+      res.send({"language":data[0].language })
+    })
+    .catch((error)=>{
+        console.log('error: ', error)
+        res.send("error user not found")
+    })
+  });
+  
 
 module.exports = router;

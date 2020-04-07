@@ -3,6 +3,10 @@
  body{ 
   background-image: url("/Image/photos.jpeg");
 } 
+#whole-front-page{
+  background-color:rgba(255, 235, 205, 0.267);
+  border: 5px solid brown;
+}
 #main-text {
   font-family: 'Times New Roman', Times, serif;
   font-style: normal;
@@ -14,13 +18,14 @@
 #heading{
   font-size: 90px;
   color: blanchedalmond;
-  -webkit-text-stroke: 2px rgb(122, 63, 36);
+  -webkit-text-stroke: 2px rgb(90, 60, 47);
 }
 #sub-heading{
   font-size: 80px;
   color: rgb(145, 112, 75);
   -webkit-text-stroke: 2px rgb(31, 18, 12);
 }
+/* }
 @media screen and (min-width: 980px) {
   .sidenav {
     display: none !important;
@@ -34,4 +39,4 @@
   #containerHeader {
     background-color: #ffffff;
   }
-}
+} */

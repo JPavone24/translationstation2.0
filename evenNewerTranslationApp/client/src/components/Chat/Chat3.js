@@ -19,31 +19,32 @@ var messagearray3 = []
 const parsed = queryString.parse(window.location.search);
 var name = parsed.name
 var room = parsed.room
+var lang = parsed.lang
 var msgReciever;
 var acceptBtn = 'accept'
 var enterChat = 'enter chat'
+var userlanguage = ''
 
+var headingArray = [];
+var greetingArray = [];
+var instrucationsArray = [];
+var labelArray = [];
+
+function TranslateText(text, array){
+  translate.translate(text, { to: lang }, function(err, res) {
+  console.log(res.text)
+  array.push(res.text[0])
+  });
+}
 
 
 function TranslateEnterBtn(text){
-  for(var i = 0; i < users.length; i++){
-    if(users[i].username ===name){
-      console.log(users[i].language)
-      var lang = users[i].language
-    }
-  }
   translate.translate(text, { to: lang }, function(err, res) {
     enterChat = res.text
   });
 }
 
 function TranslateBtn(text, Btn){
-  for(var i = 0; i < users.length; i++){
-    if(users[i].username ===name){
-      console.log(users[i].language)
-      var lang = users[i].language
-    }
-  }
   translate.translate(text, { to: lang }, function(err, res) {
      acceptBtn = res.text
   });
@@ -51,14 +52,6 @@ function TranslateBtn(text, Btn){
 
 function TranslateMessage(text, sender, array){
   console.log('translate function working')
-  console.log(users[0])
-  for(var i = 0; i < users.length; i++){
-    if(users[i].username ===name){
-      console.log(users[i].language)
-      var lang = users[i].language
-    }
-  }
-
   translate.translate(text, { to: lang }, function(err, res) {
     array.push({"user": sender, "text": res.text})
   });
@@ -154,7 +147,21 @@ componentDidMount(){
     this.setState({persons: res.data})
     
   })
+  axios.get('http://localhost:5000/testapi/user/' + name)
+  .then(res => {
+    userlanguage = res.data.language
+    console.log(userlanguage)
+  })
+
   socket.emit('EnterChatRoom',{name, room})
+
+  socket.on('translateText', function(data){
+    TranslateText('Private Chat', headingArray)
+    TranslateText("welcome " + name, greetingArray)
+    TranslateText('Click on username for private chat pr to invite to room', instrucationsArray)
+    TranslateText("chat with just this user", labelArray)
+
+  })
 
   socket.on('recieveGroupMsg', function(data){
     console.log(data)
@@ -216,19 +223,19 @@ componentDidUpdate(nextState){
           <div>
           <Navbar />
           <div className = 'container'>
-          <h1 id = 'heading' className = 'text-center'> Private Chat</h1>
+        <h1 id = 'heading' className = 'text-center'>{headingArray[0]}</h1>
            <div className = "row"  id = "chat-form">
 
               <div id = "names" className = "col-lg-4">
-                      <h3 id = "name-greeting" className = 'text-center'>Welcome {name}</h3>
+        <h3 id = "name-greeting" className = 'text-center'>{greetingArray[0]}</h3>
                       <div id = 'online-users-list'>
-                          <h5 className = 'text-center'> Click on username for a new private chat or to invite user into this conversation</h5>
+        <h5 className = 'text-center'> {instrucationsArray[0]}</h5>
                           {this.state.persons.map((user, i )=> <li  key = {i}><span  data-value = {user.username}onClick = {(event) => this.handleClick(event)}>{user.username}</span> <b>({user.language})</b></li>)} 
                       </div>
               </div>
 
                <div className = "col-lg-8" id = 'message-box'>
-                  <h1 className = 'text-center'> Chat with just this user</h1>
+        <h1 className = 'text-center'>{labelArray[0]}</h1>
                     <div id = "messages">   
                         {messagearray3.map((message, i )=> <div><span><b>{message.user}: </b>{message.text}</span></div>)}
                         {messagearray.map((message, i )=> <div><span><b> {message.user} </b>{message.text}</span> <button data-value = "accept" onClick = {(event) => this.AcceptMessage(event)}>{acceptBtn}</button></div>)}
@@ -236,12 +243,18 @@ componentDidUpdate(nextState){
                     </div>
                     <form>
                       <div className = 'row' id = 'input'>
-                          <div class = 'col-lg-9'>
-                              <input className = "h-100 w-100" type="text" id="message" onChange={this.handleChange}/>
-                          </div>
-                          <div class = 'col-lg-3'>
-                              <button className = "btn btn-primary w-100" id = 'button1' onClick={this.handleSubmit}>Add</button> 
-                          </div> 
+                          <div class = 'col-lg-9'> 
+                              <div  className="form-group" >
+                                  <input className = "form-control" 
+                                  type="text" 
+                                  id="message" 
+                                  onChange={this.handleChange}
+                                  />
+                              </div>
+                              </div>
+                              <div class = 'col-lg-3'> 
+                                    <button className = "btn btn-primary w-100" id = 'button1' onClick={this.handleSubmit}>Add</button> 
+                              </div>  
                       </div>
                     </form>
                 </div>

@@ -30,13 +30,13 @@
  }
 #messages{
    background-color: blanchedalmond;
-   height: 300px;
+   height: 250px;
    border-radius: 10px;
    padding: 30px;
 }
 
 #input{
-    /* padding-top: 10px; */
+     padding-top: 10px; 
 }
 
 #button1{

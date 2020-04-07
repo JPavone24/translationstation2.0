@@ -105,13 +105,13 @@ io.on('connection', (socket) => {;
       .then((newuser) =>{
         // console.log(newuser[0].username)
        onlineUsers.push({"username": newuser[0].username, "language": newuser[0].language, "id": socket.id})
-       io.emit('userlist', {"username": newuser[0].username, "language": newuser[0].language, "id": socket.id})
-
-       console.log(onlineUsers)
-      })
-      
+       socket.emit('userlist', {"username": newuser[0].username, "language": newuser[0].language, "id": socket.id})
+      })    
     })
-  
+   
+    socket.emit('translateText', {
+      'message': 'lets do this once'
+    })
     socket.on('groupmsg', function(data){
       console.log(data)
       io.emit('recieveGroupMsg', data)
